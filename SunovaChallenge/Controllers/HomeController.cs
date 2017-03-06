@@ -1,30 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
+using System.Threading.Tasks;
+using System.Net.Http.Headers;
+using SunovaChallenge.Models;
+using System.Xml;
+using Newtonsoft.Json;
+using System.Net;
 
 namespace SunovaChallenge.Controllers
 {
+    
     public class HomeController : Controller
     {
+        static HttpClient client = new HttpClient();
+
         public ActionResult Index()
         {
-            return View();
-        }
+            List<Car> cars = new List<Car>();
+            using (WebClient wc = new WebClient())
+            {
+                var json = wc.DownloadString("https://mobiledev.sunovacu.ca/api/Values/GetCars");
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+                cars = JsonConvert.DeserializeObject<List<Car>>(json);
+            }
+            return View(cars);
         }
     }
 }
